@@ -75,8 +75,7 @@ This repository contains my solutions to a series of SQL challenges completed ov
   - Used `CASE` expressions to classify customers into segments like "high value", "frequent shopper", etc.
 
 ## Technologies Used
-- **SQL Databases**: MySQL, PostgreSQL, SQLite (depending on challenge requirements)
-- **Tools**: SQL Workbench, DBeaver, MySQL Workbench, PostgreSQL CLI
+- **SQL Databases**: MySQL
 
 ## Setup Instructions
 
