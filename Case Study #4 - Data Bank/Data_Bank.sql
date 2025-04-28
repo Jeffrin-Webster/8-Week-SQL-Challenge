@@ -109,70 +109,8 @@ JOIN regions r ON c.region_id = r.region_id
 GROUP BY r.region_name
 ORDER BY num_customers DESC;
 
-    
-#4.How many days on average are customers reallocated to a different node?
 
-WITH allocation_durations AS (
-    SELECT 
-        customer_id,
-        node_id,
-        DATEDIFF(end_date, start_date) AS duration_days
-    FROM customers
-),
-multi_node_customers AS (
-    SELECT customer_id
-    FROM customers
-    GROUP BY customer_id
-    HAVING COUNT(DISTINCT node_id) > 1
-)
-SELECT 
-    ROUND(AVG(duration_days), 2) AS avg_days_reallocated
-FROM allocation_durations
-WHERE customer_id IN (SELECT customer_id FROM multi_node_customers);
-
-    
-#5.What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
-
-WITH allocation_durations AS (
-    SELECT 
-        c.customer_id,
-        c.node_id,
-        c.region_id,
-        DATEDIFF(c.end_date, c.start_date) AS duration_days
-    FROM customers c
-),
-multi_node_customers AS (
-    SELECT customer_id
-    FROM customers
-    GROUP BY customer_id
-    HAVING COUNT(DISTINCT node_id) > 1
-),
-reallocation_durations AS (
-    SELECT 
-        a.region_id,
-        a.duration_days
-    FROM allocation_durations a
-    WHERE a.customer_id IN (SELECT customer_id FROM multi_node_customers)
-),
-ranked AS (
-    SELECT 
-        r.region_name,
-        rd.duration_days,
-        NTILE(100) OVER (PARTITION BY r.region_name ORDER BY rd.duration_days) AS percentile_rank
-    FROM reallocation_durations rd
-    JOIN regions r ON rd.region_id = r.region_id
-)
-SELECT 
-    region_name,
-    MAX(CASE WHEN percentile_rank = 50 THEN duration_days END) AS median_days,
-    MAX(CASE WHEN percentile_rank = 80 THEN duration_days END) AS p80_days,
-    MAX(CASE WHEN percentile_rank = 95 THEN duration_days END) AS p95_days
-FROM ranked
-GROUP BY region_name
-ORDER BY region_name;
-
-
-#6.What is the unique count and total amount for each transaction type?
+#4.What is the unique count and total amount for each transaction type?
 
 SELECT 
     txn_type,
@@ -183,7 +121,7 @@ GROUP BY txn_type
 ORDER BY total_amount DESC;
 
     
-#7.Average number and amount of deposits per customer
+#5.Average number and amount of deposits per customer
 
 WITH customer_deposits AS (
     SELECT 
@@ -199,31 +137,8 @@ SELECT
     ROUND(AVG(deposit_amount), 2) AS avg_deposit_amount
 FROM customer_deposits;
 
-
-#8.For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?
-  
-
-WITH monthly_txns AS (
-    SELECT 
-        customer_id,
-        DATE_FORMAT(txn_date, '%Y-%m') AS txn_month,
-        SUM(CASE WHEN txn_type = 'deposit' THEN 1 ELSE 0 END) AS deposit_count,
-        SUM(CASE WHEN txn_type = 'purchase' THEN 1 ELSE 0 END) AS purchase_count,
-        SUM(CASE WHEN txn_type = 'withdrawal' THEN 1 ELSE 0 END) AS withdrawal_count
-    FROM transactions
-    GROUP BY customer_id, DATE_FORMAT(txn_date, '%Y-%m')
-)
-SELECT 
-    txn_month,
-    COUNT(*) AS qualified_customers
-FROM monthly_txns
-WHERE deposit_count > 1
-  AND (purchase_count >= 1 OR withdrawal_count >= 1)
-GROUP BY txn_month
-ORDER BY txn_month;
-
     
-#9.Closing balance per customer at the end of each month
+#6.Closing balance per customer at the end of each month
 
 WITH txn_with_sign AS (
     SELECT 
@@ -264,7 +179,7 @@ FROM running_balance
 ORDER BY customer_id, txn_month;
 
    
-#10.What is the percentage of customers who increase their closing balance by more than 5%?
+#7.What is the percentage of customers who increase their closing balance by more than 5%?
 
 WITH txn_with_sign AS (
     SELECT 
