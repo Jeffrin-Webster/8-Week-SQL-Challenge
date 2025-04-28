@@ -204,7 +204,7 @@ WHERE segment = 'Retail'
 GROUP BY age_band, demographic
 ORDER BY total_retail_sales DESC;
 
--- 10. Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+-- 9. Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
 SELECT 
     YEAR(week_data) AS year,
     segment,
@@ -214,74 +214,8 @@ WHERE segment IN ('Retail', 'Shopify')
 GROUP BY YEAR(week_data), segment
 ORDER BY year, segment;
 
--- 11. What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?
-WITH sales_summary AS (
-    SELECT
-        CASE
-            WHEN week_data BETWEEN '2020-05-18' AND '2020-06-14' THEN 'Before'
-            WHEN week_data BETWEEN '2020-06-15' AND '2020-07-12' THEN 'After'
-        END AS period,
-        SUM(transacti) AS total_sales
-    FROM data_bank
-    WHERE week_data BETWEEN '2020-05-18' AND '2020-07-12'
-    GROUP BY period
-),
-calc AS (
-    SELECT
-        MAX(CASE WHEN period = 'Before' THEN total_sales END) AS sales_before,
-        MAX(CASE WHEN period = 'After' THEN total_sales END) AS sales_after
-    FROM sales_summary
-)
-SELECT
-    sales_before,
-    sales_after,
-    (sales_after - sales_before) AS absolute_change,
-    ROUND(((sales_after - sales_before) / sales_before) * 100, 2) AS percent_change
-FROM calc;
 
--- 12. What about the entire 12 weeks before and after?
-WITH sales_summary AS (
-    SELECT
-        CASE
-            WHEN week_data BETWEEN '2020-03-23' AND '2020-06-14' THEN 'Before'
-            WHEN week_data BETWEEN '2020-06-15' AND '2020-09-06' THEN 'After'
-        END AS period,
-        SUM(transacti) AS total_sales
-    FROM data_bank
-    WHERE week_data BETWEEN '2020-03-23' AND '2020-09-06'
-    GROUP BY period
-),
-calc AS (
-    SELECT
-        MAX(CASE WHEN period = 'Before' THEN total_sales END) AS sales_before,
-        MAX(CASE WHEN period = 'After' THEN total_sales END) AS sales_after
-    FROM sales_summary
-)
-SELECT
-    sales_before,
-    sales_after,
-    (sales_after - sales_before) AS absolute_change,
-    ROUND(((sales_after - sales_before) / sales_before) * 100, 2) AS percent_change
-FROM calc;
-
--- 13. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
-SELECT
-    CASE 
-        WHEN week_data BETWEEN '2018-03-26' AND '2018-06-17' THEN 'Before'
-        WHEN week_data BETWEEN '2018-06-18' AND '2018-09-09' THEN 'After'
-        WHEN week_data BETWEEN '2019-03-25' AND '2019-06-16' THEN 'Before'
-        WHEN week_data BETWEEN '2019-06-17' AND '2019-09-08' THEN 'After'
-        WHEN week_data BETWEEN '2020-03-23' AND '2020-06-14' THEN 'Before'
-        WHEN week_data BETWEEN '2020-06-15' AND '2020-09-06' THEN 'After'
-    END AS period,
-    SUM(transacti) AS total_sales,
-    YEAR(week_data) AS year
-FROM data_bank
-WHERE week_data BETWEEN '2018-03-26' AND '2020-09-06'
-GROUP BY period, year
-ORDER BY year, period;
-
--- 14. Create a heatmap view for sales by region, platform, and age band
+-- 10. Create a heatmap view for sales by region, platform, and age band
 SELECT 
     region, 
     platform, 
