@@ -5,7 +5,7 @@ This repository contains my solutions to a series of SQL challenges completed ov
 ## Challenges Completed
 1. [**Danny's Dinner**](./Case%20Study%20%231%20-%20Danny's%20Diner/Dannys_Dinner.sql)
 2. [**Pizza Runner**](./Case%20Study%20%232%20-%20Pizza%20Runner/pizza_Runner.sql)
-3. [**Foodie-Fi**](./Case%20Study%20%233%20-%20Foodie-Fi/foodie_Fie.sql)
+3. [**Foodie-Fi**](./Case%20Study%20%233%20-%20Foodie-Fi/foodie_Fi.sql)
 4. [**Data Bank**](./Case%20Study%20%234%20-%20Data%20Bank/Data_Bank.sql)
 5. [**Data Mart**](./Case%20Study%20%235%20-%20Data%20Mart/Data_Mart.sql)
 6. [**Clique Bait**](./Case%20Study%20%236%20-%20Clique%20Bait/Clique_Bait.sql)
@@ -30,7 +30,7 @@ This repository contains my solutions to a series of SQL challenges completed ov
   - Aggregated data to calculate total sales per customer and identify peak times.
   - Optimized the queries for performance.
 
-### 3. [**Foodie-Fi**](./Case%20Study%20%233%20-%20Foodie-Fi/foodie_Fie.sql)
+### 3. [**Foodie-Fi**](./Case%20Study%20%233%20-%20Foodie-Fi/foodie_Fi.sql)
 - **Objective**: Work on customer satisfaction data and improve the analysis of restaurant reviews.
 - **Key Concepts**: Subqueries, window functions, `RANK()`, `DENSE_RANK()`.
 - **Approach**:
